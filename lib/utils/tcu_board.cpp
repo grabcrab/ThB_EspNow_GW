@@ -13,25 +13,29 @@ extern "C"  int rom_phy_get_vdd33();
 OneWire oneWire(DALLAS_PIN);
 DallasTemperature sensors(&oneWire);
 
-float tsReadDallas(void)
+float tsReadDallas(uint32_t &errCount)
 {
     float t;
     sensors.begin();
-    sensors.setResolution(9);    
+    sensors.setResolution(10);    
     sensors.requestTemperatures(); 
     t = sensors.getTempCByIndex(0);    
     if ((t<-50)||(t>=85)||(t==25.0))
     {
+        Serial.printf("tsReadDallas: wrong value (%.2f), remeasuring[1]\r\n", t);
         sensors.requestTemperatures();
         delay(1200);
         t = sensors.getTempCByIndex(0);
+        errCount++;
     }
 
     if ((t<-50)||(t>=85)||(t==25.0))
     {
+        Serial.printf("tsReadDallas: wrong value (%.2f), remeasuring[2]\r\n", t);
         sensors.requestTemperatures();
         delay(1200);
         t = sensors.getTempCByIndex(0);
+        errCount++;
     }    
     return t;   
 }
@@ -76,6 +80,7 @@ void boardIsolatePins(void)
 
 void boardUnisolatePins(void)
 {
+    #ifndef ESP32_S3
     boardUnisolatePin(GPIO_NUM_14);
     boardUnisolatePin(GPIO_NUM_12); 
     boardUnisolatePin(GPIO_NUM_27);
@@ -87,6 +92,7 @@ void boardUnisolatePins(void)
     boardUnisolatePin(GPIO_NUM_36);
     //boardUnisolatePin(GPIO_NUM_23);
     boardUnisolatePin(GPIO_NUM_15);    
+    #endif //ESP32_S3
 }
 
 void boardInit(void)
@@ -157,11 +163,15 @@ int boardGetBatteryVoltageMV(void)
 
 void save_ADC_Reg(void)
 {
+    #ifndef ESP32_S3
     reg_b = READ_PERI_REG(SENS_SAR_READ_CTRL2_REG);
+    #endif
 }
 
 void restore_ADC_Reg(void)
 {
+    #ifndef ESP32_S3
     WRITE_PERI_REG(SENS_SAR_READ_CTRL2_REG, reg_b);
     SET_PERI_REG_MASK(SENS_SAR_READ_CTRL2_REG, SENS_SAR2_DATA_INV);
+    #endif
 }

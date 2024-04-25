@@ -42,7 +42,7 @@ void tEspParam::print(int num)
     if (num >= 0)
         prnStr += (String("###") + num);
     
-    prnStr += (String(paramName) + " = ");
+    prnStr += ("<" + String(paramName) + "> = <");
 
     if (paramType == ptNumeric)
         prnStr += String(numParam);
@@ -52,6 +52,8 @@ void tEspParam::print(int num)
 
     if (paramType == ptNone)
         prnStr += "N/A";
+    
+    prnStr += ">";
     
     Serial.println(prnStr);
 }
@@ -82,9 +84,36 @@ bool tEspPacket::addNumeric(String pName, double val)
 
 void  tEspPacket::print(void)
 {
-    Serial.printf("ESP packet, %d parameters:\r\n", paramsCount);
-    for (auto i = 0; i < paramsCount; i++)
-        params[i].print();
+    Serial.printf("ESP packet [packetID = %lu] ", packetID);
+
+    if (ms != PARAM_NO_VAL_32)
+    {
+        Serial.printf("[millis = %lu] ", ms);
+    }
+    
+    if (timestamp != PARAM_NO_VAL_32)
+    {
+        Serial.printf("[timestamp = %lu] ", timestamp);
+    }
+
+    if (tempC != PARAM_NO_VAL_16)
+    {
+        Serial.printf("[temperature = %.1fC] ", tempC);
+    }
+
+    if (batVCC != PARAM_NO_VAL_16)
+    {
+        Serial.printf("[batVCC = %d mV] ", batVCC);
+    }
+
+    if (paramsCount) 
+    {   
+        Serial.printf("paramsCount = %d]\r\n", paramsCount);
+        for (auto i = 0; i < paramsCount; i++)
+            params[i].print();
+    }
+    else 
+        Serial.println();
 }
 
 void  tEspPacket::erase(void)

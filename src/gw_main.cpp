@@ -1,3 +1,4 @@
+#ifdef ESP_THB_GW
 #include <Arduino.h>
 #include <WiFi.h>
 #include <Arduino_MQTT_Client.h>
@@ -156,7 +157,7 @@ const Attribute_Request_Callback attribute_shared_request_callback(&processShare
 const Attribute_Request_Callback attribute_client_request_callback(&processClientAttributes, CLIENT_ATTRIBUTES_LIST.cbegin(), CLIENT_ATTRIBUTES_LIST.cend());
 
 
-void gwSetup(void)
+void gwSetup(bool firstBoot)
 {
     Serial.begin(115200); 
     Serial.println("\n\n>>>BOOT");     
@@ -309,6 +310,6 @@ void gwLoop(void)
 
     tb.loop();
 }
-
+#endif
 
 

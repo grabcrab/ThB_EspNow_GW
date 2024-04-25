@@ -31,6 +31,6 @@ void boardOffSensorPower(void);
 void save_ADC_Reg(void);
 void restore_ADC_Reg(void);
 
-float tsReadDallas(void);
+float tsReadDallas(uint32_t &errCount);
 
 #endif //__TCU_BOARD_H__

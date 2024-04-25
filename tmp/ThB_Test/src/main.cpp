@@ -177,6 +177,15 @@ void setup(void)
         while(true);
     #endif     
 
+    #ifdef DONGLE_RECEIVER
+        Serial.println("ESP DONGLE RECEIVER");
+        WiFi.mode(WIFI_AP_STA);
+        esp_wifi_set_channel(ESP_CHANNEL, WIFI_SECOND_CHAN_NONE);
+        InitWiFi();
+        testReceiver();
+        while(true);
+    #endif
+
     pinMode(TB_LED_BUILTIN, OUTPUT);
     ledInit();
     ledHello();
